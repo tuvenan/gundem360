@@ -67,21 +67,25 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 shadow-xs">
-      {/* 1. TOP BAR: Finans, Hava Durumu, Tarih */}
+      {/* 1. TOP BAR: Finans, Hava Durumu, Tarih (Mobilde Taşmaları Önleyen Duyarlı Şerit) */}
       {(showWeatherWidget || showFinanceBar) && (
-        <div className="bg-zinc-900 text-zinc-200 text-xs py-1.5 px-4">
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            {/* Sol: Tarih ve Hava */}
-            <div className="flex items-center space-x-4">
-              <span className="flex items-center gap-1.5 text-zinc-400">
-                <Clock className="w-3.5 h-3.5 text-red-500" />
-                <span>{currentDate || "Güncel"}</span>
+        <div className="bg-zinc-900 text-zinc-200 text-xs py-1 px-3 sm:px-4 border-b border-zinc-800/80">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 overflow-hidden">
+            {/* Sol: Tarih ve Hava Durumu */}
+            <div className="flex items-center space-x-2 sm:space-x-4 shrink-0 min-w-0">
+              <span className="hidden sm:flex items-center gap-1.5 text-zinc-400 truncate text-[11px] sm:text-xs">
+                <Clock className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                <span className="truncate">{currentDate || "Güncel"}</span>
               </span>
-              {showWeatherWidget && <WeatherWidget />}
+              {showWeatherWidget && <WeatherWidget className="truncate max-w-full" />}
             </div>
 
-            {/* Sağ: Canlı Finans Kurları */}
-            {showFinanceBar && <FinanceTicker />}
+            {/* Sağ: Canlı Finans Kurları (Mobilde Kaydırılabilir & Sığdırılmış) */}
+            {showFinanceBar && (
+              <div className="flex-1 min-w-0 max-w-full overflow-hidden flex justify-end">
+                <FinanceTicker className="max-w-full" />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -102,7 +106,7 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Search & Admin Quick Action */}
+        {/* Search & Actions */}
         <div className="flex items-center gap-3">
           <div className="relative hidden md:block">
             <input
@@ -115,20 +119,24 @@ export default function Header() {
             <Search className="w-4 h-4 text-zinc-400 absolute right-2.5 top-2.5" />
           </div>
 
-
-          {/* Mobile menu trigger */}
+          {/* Mobil Menü Butonu (Hamburger) */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-zinc-700 dark:text-zinc-300 hover:text-black"
-            aria-label="Menü"
+            className="md:hidden p-2 rounded-xl text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+            aria-label="Menüyü Aç / Kapat"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6 text-red-600" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* 3. CATEGORIES NAVIGATION BAR */}
-      <nav className="bg-red-700 text-white shadow-inner">
+      {/* 3. CATEGORIES NAVIGATION BAR (Yalnızca Masaüstünde Gösterilir: hidden md:block) */}
+      <nav className="hidden md:block bg-red-700 text-white shadow-inner">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-1 sm:space-x-2 py-1 shrink-0 text-xs sm:text-sm font-bold uppercase tracking-wide">
             <Link
@@ -170,57 +178,93 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Mobile Drawer Menu */}
+      {/* 4. MOBİL AÇILIR MENÜ (Tüm Gezinme ve Kategoriler Mobilde Buradan Yönetilir) */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-4 py-4 space-y-3">
+        <div className="md:hidden bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 px-4 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-xl">
+          {/* Mobil Arama */}
           <div className="relative">
             <input
               type="text"
-              placeholder="Haber ara..."
-              className="w-full bg-zinc-100 dark:bg-zinc-800 text-xs p-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700"
+              placeholder="Haber veya konu ara..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs p-2.5 pr-9 rounded-xl border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <Search className="w-4 h-4 text-zinc-400 absolute right-3 top-3" />
           </div>
-          <div className="grid grid-cols-2 gap-2 pt-2 text-sm font-semibold">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-800 dark:text-zinc-200"
-            >
-              Ana Sayfa
-            </Link>
-            {categoriesList.map((cat) => (
+
+          {/* Kategoriler Izgarası */}
+          <div>
+            <span className="text-[11px] font-black uppercase text-zinc-400 tracking-wider block mb-2">
+              Kategoriler
+            </span>
+            <div className="grid grid-cols-2 gap-1.5 text-xs font-bold">
               <Link
-                key={cat.key}
-                href={cat.href}
+                href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-zinc-800 dark:text-zinc-200"
+                className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 hover:bg-red-50 hover:text-red-600 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition flex items-center justify-between"
               >
-                {cat.name}
+                <span>Ana Sayfa</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
               </Link>
-            ))}
-            <Link
-              href="/#yazarlar"
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-red-600 dark:text-red-400"
-            >
-              Köşe Yazarları
+              {categoriesList.map((cat) => (
+                <Link
+                  key={cat.key}
+                  href={cat.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 hover:bg-red-50 hover:text-red-600 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition flex items-center justify-between"
+                >
+                  <span>{cat.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Özel Bölümler (Medya & Yazarlar) */}
+          <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+            <span className="text-[11px] font-black uppercase text-zinc-400 tracking-wider block mb-2">
+              Öne Çıkanlar & Medya
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold">
+              <Link
+                href="/#yazarlar"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 hover:bg-red-50 text-red-600 dark:text-red-400 transition flex items-center gap-2"
+              >
+                <Flame className="w-4 h-4" />
+                <span>Köşe Yazarları</span>
+              </Link>
+              <Link
+                href="/foto-galeri"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 hover:bg-amber-50 text-amber-600 dark:text-amber-400 transition flex items-center gap-2"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Foto Galeri</span>
+              </Link>
+              <Link
+                href="/video-galeri"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 hover:bg-amber-50 text-amber-600 dark:text-amber-400 transition flex items-center gap-2"
+              >
+                <Video className="w-4 h-4" />
+                <span>Video Galeri</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Kurumsal Hızlı Bağlantılar */}
+          <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-[11px] text-zinc-500 font-medium">
+            <Link href="/kunye" onClick={() => setMobileMenuOpen(false)} className="hover:underline">
+              Künye
             </Link>
-            <Link
-              href="/foto-galeri"
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5"
-            >
-              <Camera className="w-4 h-4" />
-              <span>Foto Galeri</span>
+            <span>•</span>
+            <Link href="/iletisim" onClick={() => setMobileMenuOpen(false)} className="hover:underline">
+              İletişim
             </Link>
-            <Link
-              href="/video-galeri"
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5"
-            >
-              <Video className="w-4 h-4" />
-              <span>Video Galeri</span>
+            <span>•</span>
+            <Link href="/kvkk" onClick={() => setMobileMenuOpen(false)} className="hover:underline">
+              KVKK & Gizlilik
             </Link>
           </div>
         </div>

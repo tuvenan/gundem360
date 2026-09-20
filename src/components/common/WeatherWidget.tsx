@@ -65,17 +65,17 @@ export default function WeatherWidget({ className = "" }: WeatherWidgetProps) {
   return (
     <div className={`relative inline-flex items-center gap-1.5 text-zinc-300 text-xs ${className}`}>
       {/* Şehir Seçici Açılır Buton */}
-      <div className="relative">
+      <div className="relative shrink-0">
         <button
           type="button"
           onClick={() => setCityMenuOpen(!cityMenuOpen)}
-          className="flex items-center gap-1.5 hover:text-white transition py-0.5 px-1 rounded hover:bg-zinc-800 cursor-pointer"
+          className="flex items-center gap-1 sm:gap-1.5 hover:text-white transition py-0.5 px-1 rounded hover:bg-zinc-800 cursor-pointer text-[11px] sm:text-xs"
           title="Şehir Değiştir"
         >
-          {getWeatherIcon(weather.condition)}
-          <span className="font-semibold">{weather.city}:</span>
-          <span className="font-mono font-bold text-white">{weather.degree}°C</span>
-          <span className="text-zinc-400 hidden md:inline">({weather.condition})</span>
+          <span className="shrink-0">{getWeatherIcon(weather.condition)}</span>
+          <span className="font-semibold text-zinc-300 truncate max-w-[65px] sm:max-w-none">{weather.city}:</span>
+          <span className="font-mono font-bold text-white shrink-0">{weather.degree}°C</span>
+          <span className="text-zinc-400 hidden lg:inline truncate">({weather.condition})</span>
         </button>
 
         {cityMenuOpen && (
