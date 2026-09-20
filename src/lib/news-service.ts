@@ -1540,5 +1540,32 @@ export async function resetPollVotes(id: string): Promise<Poll | null> {
   return { ...poll };
 }
 
+/**
+ * Haberler içerisinde başlık, özet, içerik, yazar ve etiketlere göre Türkçe duyarsız arama yapar.
+ */
+export async function searchNews(query: string): Promise<NewsItem[]> {
+  const store = loadStore();
+  const q = (query || "").trim().toLocaleLowerCase("tr-TR");
+  if (!q) return [];
+
+  return (store.news || []).filter((item) => {
+    const title = (item.title || "").toLocaleLowerCase("tr-TR");
+    const summary = (item.summary || "").toLocaleLowerCase("tr-TR");
+    const content = (item.content || "").toLocaleLowerCase("tr-TR");
+    const author = (item.author?.name || "").toLocaleLowerCase("tr-TR");
+    const tags = Array.isArray(item.tags)
+      ? item.tags.map((t) => (t || "").toLocaleLowerCase("tr-TR"))
+      : [];
+
+    return (
+      title.includes(q) ||
+      summary.includes(q) ||
+      content.includes(q) ||
+      author.includes(q) ||
+      tags.some((t) => t.includes(q))
+    );
+  });
+}
+
 export { getHomepageLayout, saveHomepageLayout, resetHomepageLayout } from "./services/layout-service";
 export { getSidebarWidgets, saveSidebarWidgets, resetSidebarWidgets, addCustomSidebarWidget, deleteSidebarWidget } from "./services/sidebar-service";

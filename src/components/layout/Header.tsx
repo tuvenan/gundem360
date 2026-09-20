@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
   TrendingUp,
@@ -20,6 +21,7 @@ import WeatherWidget from "@/components/common/WeatherWidget";
 import FinanceTicker from "@/components/common/FinanceTicker";
 
 export default function Header() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,6 +29,15 @@ export default function Header() {
   const [categoriesList, setCategoriesList] = useState(CATEGORIES);
   const [showWeatherWidget, setShowWeatherWidget] = useState(true);
   const [showFinanceBar, setShowFinanceBar] = useState(true);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      router.push(`/arama?q=${encodeURIComponent(q)}`);
+      setMobileMenuOpen(false);
+    }
+  };
 
   useEffect(() => {
     fetch("/api/categories")
@@ -108,16 +119,22 @@ export default function Header() {
 
         {/* Search & Actions */}
         <div className="flex items-center gap-3">
-          <div className="relative hidden md:block">
+          <form onSubmit={handleSearch} className="relative hidden md:block">
             <input
               type="text"
               placeholder="Haber veya konu ara..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 lg:w-72 bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 text-xs px-3 py-2 pr-8 rounded-full border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-56 lg:w-72 bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 text-xs px-3.5 py-2 pr-9 rounded-full border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500 transition"
             />
-            <Search className="w-4 h-4 text-zinc-400 absolute right-2.5 top-2.5" />
-          </div>
+            <button
+              type="submit"
+              className="absolute right-3 top-2.5 text-zinc-400 hover:text-red-600 transition"
+              aria-label="Ara"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          </form>
 
           {/* Mobil Menü Butonu (Hamburger) */}
           <button
@@ -182,7 +199,7 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 px-4 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-xl">
           {/* Mobil Arama */}
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <input
               type="text"
               placeholder="Haber veya konu ara..."
@@ -190,8 +207,14 @@ export default function Header() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs p-2.5 pr-9 rounded-xl border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
-            <Search className="w-4 h-4 text-zinc-400 absolute right-3 top-3" />
-          </div>
+            <button
+              type="submit"
+              className="absolute right-3 top-3 text-zinc-400 hover:text-red-600 transition"
+              aria-label="Ara"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          </form>
 
           {/* Kategoriler Izgarası */}
           <div>
