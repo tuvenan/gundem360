@@ -135,9 +135,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. CATEGORIES NAVIGATION BAR (Yalnızca Masaüstünde Gösterilir: hidden md:block) */}
-      <nav className="hidden md:block bg-red-700 text-white shadow-inner">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between overflow-x-auto no-scrollbar">
+      {/* 3. CATEGORIES NAVIGATION BAR (Yalnızca Masaüstünde Gösterilir: hidden md:flex) */}
+      <nav className="hidden md:flex w-full bg-red-700 text-white shadow-inner">
+        <div className="max-w-7xl mx-auto px-4 w-full flex items-center justify-between overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-1 sm:space-x-2 py-1 shrink-0 text-xs sm:text-sm font-bold uppercase tracking-wide">
             <Link
               href="/"

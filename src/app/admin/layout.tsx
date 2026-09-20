@@ -28,6 +28,7 @@ import {
   FileText,
   LogOut,
 } from "lucide-react";
+import ClearCacheButton from "@/components/admin/ClearCacheButton";
 
 interface AdminNavEntry {
   name: string;
@@ -215,7 +216,9 @@ export default function AdminLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <ClearCacheButton variant="header" />
+
             <Link
               href="/admin/yeni-haber"
               className="hidden sm:flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition shadow-xs"
@@ -226,6 +229,7 @@ export default function AdminLayout({
 
             <Link
               href="/"
+              target="_blank"
               className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:text-red-600 transition flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-lg"
             >
               <span>Site</span>

@@ -48,6 +48,7 @@ import {
   X,
 } from "lucide-react";
 import SiteSeoPanel from "@/components/admin/SiteSeoPanel";
+import ClearCacheButton from "@/components/admin/ClearCacheButton";
 
 interface AyarlarClientProps {
   initialSettings: SiteSettings;
@@ -956,6 +957,9 @@ export default function AyarlarClient({
         {/* ===================== SEKME 5: GELİŞMİŞ & ENJEKSİYON ===================== */}
         {activeTab === "advanced" && (
           <div className="space-y-6 animate-in fade-in">
+            {/* 0. Tek Tıkla Önbelleği Temizle Kartı */}
+            <ClearCacheButton variant="card" />
+
             {/* 1. Bakım Modu Kutusu */}
             <div className={`rounded-3xl p-6 sm:p-8 border shadow-sm transition ${
               settings.maintenanceMode
